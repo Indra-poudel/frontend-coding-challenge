@@ -1,6 +1,6 @@
 .form-wrapper {
     max-width: 500px;
-    margin: auto;
+    margin: 20px auto;
 }
 
 .form {
@@ -22,3 +22,16 @@
 
 .item-row div:nth-of-type(1) {flex-grow: 3;}
 .item-row div:nth-of-type(2) {flex-grow: 1;}
+
+.add-another-btn-wrapper {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.submit-btn-wrapper {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 40px;
+}

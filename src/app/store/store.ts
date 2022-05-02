@@ -9,11 +9,10 @@ const logger = createLogger({
 
 export const store = configureStore({
   reducer: rootReducer,
-  devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat(process.env.NODE_ENV === "development" ? [logger] : []),
+    }).concat([logger]),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

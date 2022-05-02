@@ -1,6 +1,9 @@
 import { IDropDown } from "../types/role";
 
-export const UserType: Array<IDropDown> = [
+import uuid from 'uuid-random';
+
+
+export const USER_TYPE: Array<IDropDown> = [
   {
     value: "user",
     label: "User",
@@ -14,3 +17,12 @@ export const UserType: Array<IDropDown> = [
     label: "Supervisor",
   },
 ];
+
+export const DEFAULT_PLACEHOLDER_FIELD = {
+  id: uuid(),
+  email: "",
+  role: {
+    label: "",
+    value: "",
+  },
+};

@@ -1,123 +1,122 @@
-import React from 'react'
-import { selectUsers, addUser } from '../../app/store/user'
-import { useAppDispatch, useAppSelector } from '../../hooks/redux'
+import { addUserAction } from '../../app/store/user'
+import { useAppDispatch } from '../../hooks/redux'
 import { IUser } from '../../types/user';
 
-// import AddIcon from '@mui/icons-material/Add';
+import * as Yup from 'yup'
+
+import uuid from 'uuid-random';
 
 import {
     Formik,
-    FormikHelpers,
-    FormikProps,
-    Form,
-    Field,
-    FieldProps,
+    FieldArray,
+    FormikErrors,
 } from 'formik';
-
-import { string } from 'yup';
 
 import Button from '../../components/Button';
 import { Add, Delete } from '@material-ui/icons';
 import TextField from '../../components/TextField';
 import Dropdown from '../../components/Dropdown';
-import { UserType } from '../../constants';
+
 
 import './homepage.css'
+import { DEFAULT_PLACEHOLDER_FIELD, USER_TYPE } from '../../constants';
 
 
-interface MyFormValues {
-    firstName: string;
-}
+const schema = Yup.object().shape({
+    users: Yup.array()
+        .of(
+            Yup.object().shape({
+                email: Yup.string().required(`Required`),
+                role: Yup.object().shape({
+                    value: Yup.string().required('Required'),
+                }).required('Required'),
+            })
+        )
+});
+
 
 const Homepage = () => {
-    const users = useAppSelector(selectUsers);
-    const dispatch = useAppDispatch();
 
-    console.log(users);
-
-    const listOfUser: Array<IUser> = [{
-        id: users.length + 1,
-        email: 'indra.poudel1998@gmail.com',
-        role: {
-            value: 1,
-            label: 'user'
-        }
-    }]
-
-    const inviteUser = () => {
-        dispatch(addUser(listOfUser))
-    }
+    const dispatch = useAppDispatch()
 
     return (
         <div className='form-wrapper'>
             <Formik
-                initialValues={{ email: '', password: '' }}
-                validate={values => {
-
-                    const errors: {
-                        email: string,
-                        password: string,
-                    } = {
-                        email: '',
-                        password: ''
-                    };
-
-                    if (!values.email) {
-                        errors.email = 'Required';
-                    } else if (
-                        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-                    ) {
-                        errors.email = 'Invalid email address';
-                    }
-                    return errors;
-                }}
-                onSubmit={(values, { setSubmitting }) => {
-                    setTimeout(() => {
-                        alert(JSON.stringify(values, null, 2));
-                        setSubmitting(false);
-                    }, 400);
+                validationSchema={schema}
+                initialValues={{ users: [DEFAULT_PLACEHOLDER_FIELD] }}
+                onSubmit={(values) => {
+                    dispatch(addUserAction(values.users))
                 }}
             >
                 {({
                     values,
                     errors,
-                    touched,
                     handleChange,
-                    handleBlur,
                     handleSubmit,
-                    isSubmitting,
-                    /* and other goodies */
-                }) => (
-                    <form onSubmit={handleSubmit}>
-                        <div className='item-row'>
-                            <TextField placeholder='indra.poudel1998@gmail.com' label='Email' errorMessage={errors.email} type='email' inputId='email' onChange={handleChange} onBlur={handleBlur} value={values.email} />
-                            <Dropdown
-                                label='Role'
-                                id="roleDropdown"
-                                onChange={(role) => { console.log("selected", role) }}
-                                onBlur={handleBlur}
-                                options={UserType}
-                                placeholder={'Select role'}
-                            />
-                            <Delete className='delete-icon' fontSize='small' />
-                        </div>
+                    setFieldValue,
+                    setStatus,
+                    status,
+                }) => {
+                    return (
+                        <form onSubmit={handleSubmit}>
+                            <FieldArray
+                                name="users"
+                            >
+                                {({ push, remove }) => {
+                                    const users = errors.users as FormikErrors<IUser>[]
+                                    return (
+                                        <>
+                                            {
+                                                values.users.map((user, index) => (
+                                                    <div className='item-row' key={user.id}>
+                                                        <TextField
+                                                            errorMessage={(status && status[`users.${index}.email`]) || (users && users[index] && users[index].email)}
+                                                            placeholder={'indra.poudel1998@gmail.com'} label='Email' type='email' inputId={`users.${index}.email`}
+                                                            onChange={(event) => {
+                                                                const value = event.target.value;
+                                                                const isDuplicateEmail = values.users.find((user) => user.email === value)
+                                                                if (isDuplicateEmail) {
+                                                                    setStatus({
+                                                                        [`users.${index}.email`]: `Can't use same email multiple times`
+                                                                    }
+                                                                    )
+                                                                }
+                                                                else {
+                                                                    setStatus(null)
+                                                                }
+                                                                handleChange(event)
+                                                            }} />
+                                                        <Dropdown
+                                                            label='Role'
+                                                            errorMessage={users && users[index] && users[index].role?.value}
+                                                            dropdownId={`users.${index}.role`}
+                                                            onChange={(role) => { setFieldValue(`users.${index}.role`, role) }}
+                                                            options={USER_TYPE}
+                                                            placeholder={'Please select a role'}
+                                                        />
+                                                        <Delete className='delete-icon' fontSize='small' onClick={() => remove(index)} />
+                                                    </div>
+                                                ))
+                                            }
+                                            <div className='add-another-btn-wrapper'>
+                                                <Button buttonRoleType='button' icon={<Add fontSize='small' />} type={'text'} onClick={() => push({
+                                                    ...DEFAULT_PLACEHOLDER_FIELD,
+                                                    id: uuid()
+                                                })} title='Add another' />
+                                            </div>
+                                            <div className='submit-btn-wrapper'>
+                                                <Button onClick={handleSubmit} buttonRoleType="submit" title={'INVITES MEMBER'} />
+                                            </div>
+                                        </>
 
-                        {/* <input
-                            type="password"
-                            name="password"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            value={values.password}
-                        /> */}
-                        {/* {errors.password && touched.password && errors.password}
-                        <button type="submit" disabled={isSubmitting}>
-                            Submit
-                        </button> */}
-                        {/* <Button icon={<Add fontSize='small' />} type={'text'} onClick={() => []} title='Add another' /> */}
-                    </form>
-                )}
+                                    );
+                                }}
+                            </FieldArray>
+                        </form>
+                    )
+                }}
             </Formik>
-        </div>
+        </div >
     )
 }
 

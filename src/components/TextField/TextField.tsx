@@ -14,7 +14,7 @@ type TextFieldProps = {
     suffixText?: string,
     isError?: boolean,
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
-    onBlur: (event: React.FocusEvent<HTMLInputElement>) => void,
+    onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void,
 }
 
 const TextField = ({
@@ -42,7 +42,7 @@ const TextField = ({
     const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
         setBlur(true)
         setFocus(false)
-        onBlur(event)
+        onBlur && onBlur(event)
     }
 
     return (

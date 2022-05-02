@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import cn from 'classnames';
 import './dropdown.css'
 import { KeyboardArrowDown } from "@material-ui/icons";
-import { UserType } from "../../constants";
+import { USER_TYPE } from "../../constants";
 import { IDropDown } from "../../types/role";
 
 type DropDownProps = {
-    id: string,
+    dropdownId: string,
     label?: string,
     placeholder?: string,
     className?: string,
@@ -14,7 +14,7 @@ type DropDownProps = {
     value?: string,
     isError?: boolean,
     onChange: (selectedRole?: IDropDown) => void,
-    onBlur: (event: React.FocusEvent<HTMLSelectElement>) => void,
+    onBlur?: (event: React.FocusEvent<HTMLSelectElement>) => void,
     selectedRole?: IDropDown,
     options: Array<IDropDown>
 }
@@ -24,7 +24,7 @@ const Dropdown = ({
     className,
     errorMessage,
     isError,
-    id,
+    dropdownId,
     onChange,
     onBlur,
     placeholder,
@@ -43,12 +43,12 @@ const Dropdown = ({
     const handleBlur = (event: React.FocusEvent<HTMLSelectElement>) => {
         setBlur(true)
         setFocus(false)
-        onBlur(event)
+        onBlur && onBlur(event)
     }
 
     const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const value = event.target.value;
-        const role = UserType.find((user) => user.value === value)
+        const role = USER_TYPE.find((user) => user.value === value)
         onChange(role);
         setSelected(true)
     }
@@ -58,16 +58,16 @@ const Dropdown = ({
             'error-dropdown': errorMessage || isError
         })}>
             {label && (<span className="label-wrapper">
-                <label htmlFor={id}>{label}</label>
+                <label htmlFor={dropdownId}>{label}</label>
             </span>)}
             <div className={cn('dropdown-field', {
                 isFocus,
                 isBlur
             })}>
-                <select className={cn("select", {
+                <select defaultValue={'placeholder'} className={cn("select", {
                     isSelected
-                })} id={id} name={id} onBlur={handleBlur} onFocus={handleFocus} onChange={handleChange}>
-                    <option value="" className="dropdown-placeholder" disabled selected hidden>{placeholder}</option>
+                })} id={dropdownId} name={dropdownId} onBlur={handleBlur} onFocus={handleFocus} onChange={handleChange}>
+                    <option value="placeholder" className="dropdown-placeholder" disabled hidden>{placeholder}</option>
                     {options.map((option) => <option key={option.value} value={option.value} >{option.label}</option>)}
                 </select>
                 <span className="arrow-down">

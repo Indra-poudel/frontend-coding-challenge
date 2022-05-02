@@ -13,18 +13,18 @@ const userSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
-    addUser(
+    addUserAction(
       state: IUserInitialState,
       { payload }: PayloadAction<Array<IUser>>
     ) {
       state.users = [...state.users, ...payload];
     },
-    deleteUser(state: IUserInitialState, { payload }: PayloadAction<IUser>) {
-      state.users = state.users.filter((user) => user.id !== payload.id);
+    deleteUserAction(state: IUserInitialState, { payload }: PayloadAction<IUser>) {
+      state.users = state.users.filter((user) => user.email !== payload.email);
     },
   },
 });
 
-export const { addUser, deleteUser } = userSlice.actions;
+export const { addUserAction, deleteUserAction } = userSlice.actions;
 
 export default userSlice.reducer;
