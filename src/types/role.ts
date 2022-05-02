@@ -1,4 +1,4 @@
-export interface IRole {
+export interface IDropDown {
   value: string | number;
   label: string;
 }

@@ -1,0 +1,24 @@
+.form-wrapper {
+    max-width: 500px;
+    margin: auto;
+}
+
+.form {
+    display: flex;
+    justify-content: center;
+}
+
+.delete-icon {
+    position: absolute;
+    top: 45px;
+    right: -20px;
+}
+
+.item-row {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.item-row div:nth-of-type(1) {flex-grow: 3;}
+.item-row div:nth-of-type(2) {flex-grow: 1;}

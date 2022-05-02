@@ -1,7 +1,7 @@
-import { IRole } from "./role";
+import { IDropDown } from "./role";
 
 export interface IUser {
   id: number;
   email: string;
-  role: IRole;
+  role: IDropDown;
 }
