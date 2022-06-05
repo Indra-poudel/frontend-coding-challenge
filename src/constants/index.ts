@@ -1,7 +1,6 @@
 import { IDropDown } from "../types/role";
 
-import uuid from 'uuid-random';
-
+import uuid from "uuid-random";
 
 export const USER_TYPE: Array<IDropDown> = [
   {
@@ -15,6 +14,10 @@ export const USER_TYPE: Array<IDropDown> = [
   {
     value: "supervisor",
     label: "Supervisor",
+  },
+  {
+    value: "asdf",
+    label: "fdas",
   },
 ];
 
